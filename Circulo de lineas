@@ -1,0 +1,40 @@
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+#include <math.h>
+void init(void){
+	glClearColor(1.0,1.0,1.0,0.0);
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(-200.0,200.0,-200.0,200.0);
+}
+void LineasRadiales(void){
+	GLfloat angulo;
+	int i;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0,0.0,0.0);
+	glBegin(GL_LINES);
+	
+	for(i=0;i<360;i+=3){
+		angulo=(GLfloat)i*3.14159f/180.0f;
+		glVertex2f(0.0f,0.0f);
+		glVertex2f(cos(angulo)*100,sin(angulo)*100);	
+	}
+	glEnd();
+	glFlush();
+}
+int main(int argc, char ** argv){
+	glutInit(&argc,argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50,100);
+	glutInitWindowSize(400,400);
+	glutCreateWindow("Programa de ejemplo: Lineas radiales");
+	init();
+	glutDisplayFunc(LineasRadiales);
+	glutMainLoop();
+}
