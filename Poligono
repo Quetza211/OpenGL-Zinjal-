@@ -1,0 +1,39 @@
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+
+void init (void)
+{
+	glClearColor(1.0,1.0,1.0,0.0);
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(0.0,300.0,0.0,200.0);
+}
+void poligono(void){
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0,0.0,0.0);
+	glBegin(GL_POLYGON);
+	glVertex2i(10,10);
+	glVertex2i(100,10);
+	glVertex2i(150,50);
+	glVertex2i(100,100);
+	glVertex2i(50,80);
+	glVertex2i(10,10);
+	glEnd();
+	glFlush();
+}
+	int main (int argc, char ** argv){
+		glutInit(&argc,argv);
+		glutInitWindowPosition(50,100);
+		glutInitWindowSize(300,200);
+		glutCreateWindow("Programa de jemplo: POLIGONO");
+		init ();
+		glutDisplayFunc (poligono);
+		glutMainLoop();
+	}
+		
