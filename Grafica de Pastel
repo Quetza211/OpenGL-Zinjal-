@@ -1,0 +1,91 @@
+#ifdef _APPLE_
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+#include <iostream>
+#include <math.h>
+#include <time.h>
+using namespace std;
+//Variables globales
+int r=375;
+int num=0;
+float aux=0;
+
+//Variables para probar la grafica de pastel
+//int P[]={90,10};
+//int P[]={10,10,50,10,10,10};
+//float P[]={5.5,10.5,24,47.7,2.3,9.7,0.3};
+int P[]={10,10,10,10,10,10,10,10,10,10};
+//int P[]={10,10,50,10,10,10,30};
+//int P[]={100,10};
+//int P[]={50,10,10,10,10,10};
+
+void init(){
+	glClearColor(1.0,1.0,1.0,1.0);
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(-400.0,400.0,-400.0,400.0);
+}
+	void circulo(int r){ //Funcion para hacer el grafico de pastel
+		glClear(GL_COLOR_BUFFER_BIT);
+		float anguloinicial=0;
+		
+		for(int i=0;i<sizeof P/sizeof P[0];i++){
+			float porcentaje=P[i];
+			float angulofinal=anguloinicial+(porcentaje/aux)*360.0;//Saca el Angulo
+			//Para visualizar
+			glColor3f((float)rand()/RAND_MAX,(float)rand()/RAND_MAX,(float)rand()/RAND_MAX);//Color
+			glBegin(GL_POLYGON);
+			for (float angulo=anguloinicial;angulo<=angulofinal;angulo++) {
+				float x=0+r*cos(angulo*3.14159/180);
+				float y=0+r*sin(angulo*3.14159/180);
+				glVertex2f(x,y);
+			}
+			glVertex2f(0,0);
+			glEnd();
+			
+			//Punto medio del segmento
+			float puntomedio=(anguloinicial+angulofinal)/2.0;
+			float x=0.8*r*cos(puntomedio*3.14159/180);
+			float y=0.8*r*sin(puntomedio*3.14159/180);
+			
+			//Mostrar porcentajes
+			glColor3f(0,0,0);//Color Negro
+			glRasterPos2f(x,y);
+			string porc_tex= to_string((float)porcentaje) + "%";
+			for(char i:porc_tex){
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,i);
+			}
+			
+			anguloinicial=angulofinal;
+			glFlush();
+	}
+}
+		void datos(){
+			for(int i=0;i<sizeof P/sizeof P[0];i++){
+				aux=aux+P[i];
+				num=i;
+			}
+			cout<<"El % total de la grafica de pastel es de: "<<aux<<endl;
+			cout<<"Total de Divisiones de la grafica de pastel es: "<<num+1<<endl;
+			if(aux>100){
+				cout<<"Fin del programa el total de la grafica pasa mas del 100%"<<endl;
+				exit(0);
+			}else{
+				circulo(r);
+			}
+
+		}
+		int main(int argc,char** argv){
+			glutInit(&argc,argv);
+			glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+			glutInitWindowSize(400,400);
+			glutCreateWindow("Grafica de pastel");
+			init();
+			glutDisplayFunc(datos);
+			glutMainLoop();
+		}
