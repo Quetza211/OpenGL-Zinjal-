@@ -1,0 +1,264 @@
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+float x1=0;
+float z1=0,z2=0,z3=0,z4=0,z5=0,z6=0,z7=0,z8=0,z9=0; //Coordenadas de brazos y piernas
+float grados=0,gradobrazotop=0.5,gradobrazodown=1,gradopiernatop=0.5,gradopiernadown=1; //Guarda los grados de las piernas y brazos
+float angulobrazoizqtop=0,angulobrazoizqdown=0,angulobrazodertop=0,angulobrazoderdown=0;
+float angulopiernaizqtop=0,angulopiernaizqdown=0,angulopiernadertop=0,angulopiernaderdown=0;
+int vista=0;
+int aux=0;//Da la animacion para que se vea que mueve el brazo
+
+void init(){
+	glClearColor(0.7,0.7,1.0,0.0); // Ventana de visualización en blanco.
+}
+	void escena(){
+		glPushMatrix();
+		glColor3f(0.5, 0.5, 0.5);
+		glTranslatef(0,-1.0,0.0);
+		glScalef(30.0,0.0,30.0);
+		glutSolidCube(1.0);
+		glPopMatrix();
+	}
+	void obstaculo1(){
+		glPushMatrix();
+		glColor3f(0.2,0.5,0.8);
+		glTranslatef(-5.0,0.5,-5.0);
+		glScalef(3.0,3.0,3.0);
+		glutSolidCube(1.0);
+		glPopMatrix();
+	}
+		void obstaculo2(){
+			glPushMatrix();
+			glColor3f(0.8,0.2,0.2);
+			glTranslatef(6.0,0.5,-12.0);
+			glScalef(2.0,3.0,1.0);
+			glutSolidCube(1.0);
+			glPopMatrix();
+		}
+			void obstaculo3(){
+				glPushMatrix();
+				glColor3f(0.5,0.8,0.2);
+				glTranslatef(10.0,0.5,-2.0);
+				glScalef(2.0,1.0,1.0);
+				glutSolidCube(1.0);
+				glPopMatrix();
+			}
+	
+		void robot(float x, float y, float z, float ancho, float alto, float volumen, float r, float g, float b) {
+			glPushMatrix();
+			glColor3f(r,g,b);
+			glTranslatef(x1,y,z1);//Rota el cuerpo
+			glRotatef(grados,0,1,0);
+			glTranslatef(x,0,z); //Mueve el cuerpo
+			glScalef(ancho,alto,volumen);
+			glutSolidCube(1.0);
+			glPopMatrix();
+		}
+		
+		void display(){
+		glClear(GL_COLOR_BUFFER_BIT);
+		glLoadIdentity();
+		//Vistas 
+		switch (vista) {
+		case 0: //Vista de enfrente
+			gluLookAt(0.0,4.0,25.0,0.0,0.0,0.0,0.0,2.0,0.0);
+			break;
+		case 1: //Vista a la izquierda
+			gluLookAt(-24.0,6.0,0.0,0.0,4.0,.0,0.0, 1.0, 0.0);
+			break;
+		case 2: //Vista a la derecha
+			gluLookAt(24.0,6.0,0.0,0.0,4.0,0.0,0.0,1.0,0.0);
+			break;
+		case 3: //Vista desde arriba
+			gluLookAt(0.0,15.0,0.0,0.0,0.0,0.0,0.0,0.0,-1.0);
+			break;
+		}
+		escena();
+		obstaculo1();
+		obstaculo2();
+		obstaculo3();
+		//Brazo
+		z2=angulobrazodertop;
+		z4=angulobrazoderdown;
+		z3=angulobrazoizqtop;
+		z5=angulobrazoizqdown;
+		//Pierna
+		z6=angulopiernadertop;
+		z8=angulopiernaderdown;
+		z7=angulopiernaizqtop;
+		z9=angulopiernaizqdown;
+		//     X   Y   Z  ancho alto  volum Colores del robot
+		robot(0.0,2.5,0.0, 0.5 , 0.5 , 0.5 , 1.0 , 0.87 , 0.77);//Cabeza
+		robot(0.15, 2.6, 0.22, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0);//Ojo derecho
+		robot(-0.15, 2.6, 0.22, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0);//Ojo izquierdo
+		robot(0.0,1.5,0.0,1.0,1.0,0.5,0.0,0.0,1.0);//Tronco
+		robot(-0.75,1.75,0.0+z3,0.4,0.5,0.5,1.0,0.0,1.0);//Brazo izquierdo arriba
+		robot(-0.75,1.25,0.0+z5,0.4,0.5,0.5,0.0,0.0,0.0);//Brazo izquierdo abajo
+		robot(0.75,1.75,0.0+z2,0.4,0.5,0.5,1.0,0.0,1.0);//Brazo derecho arriba
+		robot(0.75,1.25,0.0+z4,0.4,0.5,0.5,0.0,0.0,0.0);//Brazo derecho abajo
+		robot(-0.25,0.5,0.0+z7,0.4,0.57,0.5,0.54,0.27,0.07);//Pierna izquierda arriba
+		robot(-0.25,-0.4,0.0+z9,0.4,0.75,0.5,0.65,0.16,0.16);//Pierna izquierda abajo
+		robot(0.25,0.5,0.0+z6,0.4,0.57,0.5,0.54,0.27,0.07);//Pierna derecha arriba
+		robot(0.25,-0.4,0.0+z8,0.4,0.75,0.5,0.65,0.16,0.16);//Pierna derecha abajo
+		glFlush();
+	}
+	
+		void Menu(unsigned char key, int x, int y){
+			switch (key){
+			case 'w': //Caminar hacia enfrente
+				z1-=cos(grados*3.1416/180.0);
+				x1+=sin(grados*3.1416/180.0);
+				if(z1<-15 || z1>15 || x1<-15 || x1>15){
+					z1=0;
+					x1=0;
+				}
+				if(z1<-3.5 && z1>-6.5 && x1<-3.5 && x1>-6.5){ //Obtaculo 1
+					z1=0;
+					x1=0;
+				}
+				if(z1<-11.0 && z1>-13.0 && x1<7.0 && x1>5.0){ //Obtaculo 2
+					z1=0;
+					x1=0;
+				}
+				if(z1<-1.5 && z1>-2.5 && x1<11.0 && x1>9.0){ //Obtaculo 3
+					z1=0;
+					x1=0;
+				}
+				
+				if(aux==0){
+					//Brazo
+					angulobrazoizqtop=sin(gradobrazotop*0.0174533)*30.0; //Grados Brazos y Piernas
+					angulobrazodertop=-sin(gradobrazotop*0.0174533)*30.0;
+					angulobrazoizqdown=sin(gradobrazodown*0.0174533)*45.0; 
+					angulobrazoderdown=-sin(gradobrazodown*0.0174533)*45.0;
+					//Pierna
+					angulopiernaizqtop=sin(gradopiernatop*0.0174533)*30.0; 
+					angulopiernadertop=-sin(gradopiernatop*0.0174533)*30.0; 
+					angulopiernaizqdown=sin(gradopiernadown*0.0174533)*45.0; 
+					angulopiernaderdown=-sin(gradopiernadown*0.0174533)*45.0; 
+				}else{
+					//Brazo
+					angulobrazoizqtop=-sin(gradobrazotop*0.0174533)*30.0; //Grados Brazos y Piernas
+					angulobrazodertop=sin(gradobrazotop*0.0174533)*30.0;
+					angulobrazoizqdown=-sin(gradobrazodown*0.0174533)*45.0; 
+					angulobrazoderdown=sin(gradobrazodown*0.0174533)*45.0;
+					//Pierna
+					angulopiernaizqtop=-sin(gradopiernatop*0.0174533)*30.0;
+					angulopiernadertop=sin(gradopiernatop*0.0174533)*30.0; 
+					angulopiernaizqdown=-sin(gradopiernadown*0.0174533)*45.0; 
+					angulopiernaderdown=sin(gradopiernadown*0.0174533)*45.0; 
+				}
+				aux = (aux + 1) % 2; // Cambiar el valor de aux entre 0 y 1
+				glutPostRedisplay(); //Llama a la funcion display para que vuelva a dibujar
+				break;
+				case 's': //Caminar hacia atras
+					z1+=cos(grados*3.1416/180.0);
+					x1-=sin(grados*3.1416/180.0);
+					if(z1<-15 || z1>15 || x1<-15 || x1>15){ //Limite escena
+						z1=0;
+						x1=0;
+					}
+					
+					if (z1 < -5.0 + 1.5 && z1 > -5.0 - 1.5 && x1 < -5.0 + 1.5 && x1 > -5.0 - 1.5) { //Figuras
+						z1=0;
+						x1=0;
+					}
+					
+					if (z1 < -12.0 + 1.0 && z1 > -12.0 - 1.0 && x1 < 6.0 + 1.0 && x1 > 6.0 - 1.0) {
+						z1=0;
+						x1=0;
+					}
+					
+					if (z1 < -2.0 + 0.5 && z1 > -2.0 - 0.5 && x1 < 10.0 + 1.0 && x1 > 10.0 - 1.0) {
+						z1=0;
+						x1=0;
+					}
+					
+					if(aux==0){
+						//Brazo
+						angulobrazoizqtop=sin(gradobrazotop*0.0174533)*30.0; //Grados brazos adelante
+						angulobrazodertop=-sin(gradobrazotop*0.0174533)*30.0;
+						angulobrazoizqdown=sin(gradobrazodown*0.0174533)*45.0;
+						angulobrazoderdown=-sin(gradobrazodown*0.0174533)*45.0;
+						//Pierna
+						angulopiernaizqtop=sin(gradopiernatop*0.0174533)*30.0; //Grados pierna adelante
+						angulopiernadertop=-sin(gradopiernatop*0.0174533)*30.0;
+						angulopiernaizqdown=sin(gradopiernadown*0.0174533)*45.0;
+						angulopiernaderdown=-sin(gradopiernadown*0.0174533)*45.0;
+					}else{
+						//Brazo
+						angulobrazoizqtop=-sin(gradobrazotop*0.0174533)*30.0; //Grados brazo atras
+						angulobrazodertop=sin(gradobrazotop*0.0174533)*30.0;
+						angulobrazoizqdown=-sin(gradobrazodown*0.0174533)*45.0;
+						angulobrazoderdown=sin(gradobrazodown*0.0174533)*45.0;
+						//Pierna
+						angulopiernaizqtop=-sin(gradopiernatop*0.0174533)*30.0; //Grados pierna atras
+						angulopiernadertop=sin(gradopiernatop*0.0174533)*30.0;
+						angulopiernaizqdown=-sin(gradopiernadown*0.0174533)*45.0;
+						angulopiernaderdown=sin(gradopiernadown*0.0174533)*45.0;
+					}
+					aux=(aux+1)%2;//Cambiar el valor entre 0 y 1
+					glutPostRedisplay();
+					break;
+				case 'd': //Moverse a la izquierda
+					grados +=90;
+					glutPostRedisplay();
+					break;
+				case 'a': //Moverse a la derecha
+					grados-=90; // Aumentar el ángulo de rotación
+					glutPostRedisplay(); // Actualizar la pantalla
+					break;
+				//Posicion de la camara
+				case 'z': //Vista de enfrente
+					vista=0;
+					glutPostRedisplay();
+					break;
+				case 'x':  //Vista a la izquierda
+					vista=1;
+					glutPostRedisplay();
+					break;
+				case 'c': //Vista a la derecha
+					vista=2;
+					glutPostRedisplay();
+					break;
+				case 'v': //Vista desde arriba
+					vista=3;
+					glutPostRedisplay();
+					break;	
+				default:
+					cout << "Letra incorrecta" << endl;
+					break;
+			}
+		}
+		
+			void winReshapeFcn(GLint newWidth, GLint newHeight) {
+				glViewport(0, 0, newWidth, newHeight);
+				glMatrixMode(GL_PROJECTION);
+				glFrustum(-1.0, 1.0, -1.0, 1.0, 1.0, 200.0);
+				glMatrixMode(GL_MODELVIEW);
+				glClear(GL_COLOR_BUFFER_BIT);
+			}
+			
+		int main(int argc, char **argv) {
+			glutInit(&argc, argv);
+			glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+			glutInitWindowSize(650, 650);
+			glutCreateWindow("Robot 3D");
+			init();
+			glutDisplayFunc(display);
+			glutReshapeFunc(winReshapeFcn);
+			glutKeyboardFunc(Menu);
+			glutMainLoop();
+		}
+		
