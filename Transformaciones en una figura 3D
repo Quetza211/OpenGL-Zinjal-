@@ -1,0 +1,88 @@
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+#include <iostream>
+using namespace std;
+GLsizei winWidth=500,winHeight=500;//Tamaño inicial de la ventana de visualizacion
+int c=0,a=0,d=0;
+void init (void){
+	glClearColor(1.0,1.0,1.0,0.0);//Ventana de visualizacion en blanco.
+}
+	void Figura1(int c,int a,int d){
+		glClear(GL_COLOR_BUFFER_BIT);//Borra la ventana de visualizacion
+		glColor3f(0.0,0.0,1.0);//Establece el color de las lineas en azul
+		glLoadIdentity();
+		gluLookAt(3.0,3.0,3.0,0.0,0.0,0.0,0.0,1.0,0.0);//Establece la transformacion de visionado
+		glTranslatef(c,0,0);
+		glRotatef(a,0,1,0);
+		glScalef(1.5+d,2.0+d,1.0+d);
+		glutWireCube(1.0);
+		glFlush();
+	}
+		void Menu(){
+			cout<<"Q: Aumenta la traslacion"<<endl;
+			cout<<"W: Disminuye la traslacion"<<endl;
+			cout<<"A: Aumenta la rotacion"<<endl;
+			cout<<"S: Disminuye la rotacion"<<endl;
+			cout<<"Z: Aumenta la escala"<<endl;
+			cout<<"X: Disminuye la escala"<<endl;
+			char aux;
+			do{
+				cin>>aux;
+				switch(aux){
+				case 'Q':
+					c+=1;
+					Figura1(c,a,d);						
+					break;
+				case 'W':
+					c-=1;
+					Figura1(c,a,d);
+					break;
+				case 'A':
+					a+=5;
+					Figura1(c,a,d);
+					break;
+				case 'S':
+					a-=5;
+					Figura1(c,a,d);
+					break;
+				case 'Z':
+					d+=1;
+					Figura1(c,a,d);
+					break;
+				case 'X':
+					d-=1;
+					if(d<0){
+						d=1;
+					}
+					Figura1(c,a,d);
+					break;
+				default:
+					cout<<"Letra incorrecta"<<endl;
+					break;
+				}
+			} while(aux!='6');
+		}
+			void winReshapeFcn(GLint newWidth,GLint newHeight){
+				glViewport(0,0,newWidth,newHeight);
+				glMatrixMode(GL_PROJECTION);
+				glFrustum(-2.0,2.0,-2.0,2.0,1.0,40.0);
+				glMatrixMode(GL_MODELVIEW);
+				glClear(GL_COLOR_BUFFER_BIT);
+			}
+				int main(int argc, char **argv){
+					glutInit(&argc,argv);
+					glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+					glutInitWindowSize(winWidth,winHeight);
+					glutCreateWindow("Poliedros en modelo alambrico");
+					init();
+					glutDisplayFunc(Menu);
+					glutReshapeFunc(winReshapeFcn);
+					glutMainLoop();
+				}
