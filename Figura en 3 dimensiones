@@ -1,0 +1,58 @@
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+# include <GL/glut.h>
+#endif
+
+GLsizei winWidth=500,winHeight=500;//Tamaño inicial de la ventana de visualizacion
+
+void init (void){
+	glClearColor(1.0,1.0,1.0,0.0);//Ventana de visualizacion en blanco.
+}
+	void displayWirePolyhedra(void){
+		glClear(GL_COLOR_BUFFER_BIT);//Borra la ventana de visualizacion
+		glColor3f(0.0,0.0,1.0);//Establece el color de las lineas en azul
+		//Establece la transformacion de visionado
+		gluLookAt(5.0,5.0,5.0,0.0,0.0,0.0,0.0,1.0,0.0);
+		//Cambia de escala un cubo y lo muestra como paralelepipedo alambrico
+		glScalef(1.5,2.0,1.0);
+		glutWireCube(1.0);
+		
+		//Cambia de escala, trslada y muestra en dodecaedro alambrico
+		glScalef(0.8,0.5,0.8);
+		glTranslatef(-6.0,-5.0,0.0);
+		glutWireDodecahedron();
+		//Traslada y muestra un tetraedro en modelo alambrico
+		glTranslatef(8.6,8.6,2.0);
+		glutWireTetrahedron();
+		//Traslada y visualiza un octaedro en modelo alambrico
+		glTranslatef(-3.0,-1.0,0.0);
+		glutWireOctahedron();
+		//Cambia de escala, traslada y muestra un icosaedro en modelo alambrico
+		glScalef(0.8,0.8,1.0);
+		glTranslatef(4.3,-2.0,0.5);
+		glutWireIcosahedron();
+		glFlush();
+	}
+		void winReshapeFcn(GLint newWidth,GLint newHeight){
+			glViewport(0,0,newWidth,newHeight);
+			glMatrixMode(GL_PROJECTION);
+			glFrustum(-1.0,1.0,-1.0,1.0,2.0,20.0);
+			glMatrixMode(GL_MODELVIEW);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+			int main(int argc, char **argv){
+				glutInit(&argc,argv);
+				glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+				glutInitWindowPosition(100,100);
+				glutInitWindowSize(winWidth,winHeight);
+				glutCreateWindow("Poliedros en modelo alambrico");
+				init();
+				glutDisplayFunc(displayWirePolyhedra);
+				glutReshapeFunc(winReshapeFcn);
+				glutMainLoop();
+			}
